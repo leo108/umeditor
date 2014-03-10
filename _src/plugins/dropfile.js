@@ -27,12 +27,21 @@ UM.plugins['dropfile'] = function() {
 
                                 xhr.send(fd);
                                 xhr.addEventListener('load', function (e) {
-                                    var picLink = me.getOpt('imagePath') + e.target.response;
-                                    if(picLink) {
-                                        me.execCommand('insertimage', {
-                                            src: picLink,
-                                            _src: picLink
-                                        });
+                                    var ret = UM.utils.parseJSON(e.target.response);
+                                    if(ret && ret.result == true){
+                                        var picLink = me.getOpt('imagePath') + ret.path;
+                                        if(picLink) {
+                                            me.execCommand('insertimage', {
+                                                src: picLink,
+                                                _src: picLink
+                                            });
+                                        }
+                                    }else{
+                                        if(ret == false || ret.error == ''){
+                                            alert("上传失败");
+                                        }else{
+                                            alert(ret.error);
+                                        }
                                     }
                                 });
                                 hasImg = true;

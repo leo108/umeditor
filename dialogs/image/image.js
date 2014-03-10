@@ -124,7 +124,7 @@
 
                     currentDialog.hideTip();
 
-                }, 3000 );
+                }, 30000 );
             }
 
             Upload.toggleMask();
@@ -251,9 +251,18 @@
 
                             xhr.send(fd);
                             xhr.addEventListener('load', function (e) {
-                                Base.callback(me.editor, me.dialog, e.target.response, "SUCCESS");
-                                if (i == fileList.length - 1) {
-                                    $(img).remove()
+                                var ret = UM.utils.parseJSON(e.target.response);
+                                if(ret && ret.result == true){
+                                    Base.callback(me.editor, me.dialog, ret.path, "SUCCESS");
+                                    if (i == fileList.length - 1) {
+                                        $(img).remove()
+                                    }
+                                }else{
+                                    if(ret == false || ret.error == ''){
+                                        Base.callback(me.editor, me.dialog, '', '上传失败');
+                                    }else{
+                                        Base.callback(me.editor, me.dialog, '', ret.error);
+                                    }
                                 }
                             });
                             hasImg = true;
